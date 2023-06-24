@@ -1,4 +1,5 @@
 <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
 
 class EmployeeController extends CI_Controller
 {
@@ -7,9 +8,9 @@ class EmployeeController extends CI_Controller
         parent::__construct();
         //$this->load->helper('url');
         $this->load->model('Employee_model');
+        $this->load->library('session');
     }
     
-
 
     //example for my practices
     //get value from URL 
@@ -45,7 +46,7 @@ class EmployeeController extends CI_Controller
         $this->load->view('Templates/navbar');
         $this->load->view('Frontend/employee_info', $receiveddata);
         $this->load->view('Templates/footer');
-        
+
     }
 
     public function about(){
@@ -73,15 +74,21 @@ class EmployeeController extends CI_Controller
         if($this->form_validation->run())
         {
             $data = [
-                //'key_name_in_database' => $this->input->post('ame_of_input_field')        
+                //'key_name_in_database' => $this->input->post('name_of_input_field')        
                 'name' => $this->input->POST('name'), 
                 'email' => $this->input->POST('email'),
                 'mobile' => $this->input->POST('mobile'),
                 'address' => $this->input->POST('address'),
             ];
-
-          //  $this->load->model('Employee_model','emp'); // 2nd parameter means: short the model name as "emp"
+            
+            //  $this->load->model('Employee_model','emp'); // 2nd parameter means: short the model name as "emp"
+            
             $this->Employee_model->insert_data($data);
+
+
+            //session data for alert message in employee_info
+            $this->session->set_flashdata('status', 'Employee details inserted successfuly');
+            
 
             redirect(base_url('info'));
         }
@@ -125,8 +132,12 @@ class EmployeeController extends CI_Controller
             $this->load->model('Employee_model');
             $this->Employee_model->update_employee($data, $id);
 
+            //session data for alert message in employee_info
+            $this->session->set_flashdata('status', 'Employee details updated successfuly');
+
 
             redirect(base_url('info'));
+           
         }
         else
         {
@@ -140,8 +151,11 @@ class EmployeeController extends CI_Controller
         $this->load->model('Employee_model');
         $this->Employee_model->delete_employee($id);
 
+        $this->session->set_flashdata('status', 'Employee details deleted successfuly');
+
         redirect(base_url('info'));
     }
    
 }
+
 ?>
